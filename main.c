@@ -80,8 +80,8 @@ int main() {
                 break;
 
             case 9:
-                // printPosLivre(dados);
-                // break;
+                printPosLivre(dados);
+                break;
 
             case 11:
                 printa_cabecalho(dados);
