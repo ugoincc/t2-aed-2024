@@ -1,7 +1,6 @@
 #include "arvorebinaria.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 int main() {
     int opcao, target;
@@ -88,9 +87,23 @@ int main() {
                 printPosLivre(dados);
                 break;
 
-            case 11:
-                printa_cabecalho(dados);
+            case 10:
+                cab=le_cabecalho(dados);
+                imprime_arvore_lista(dados, cab->pos_cabeca);
+                printf("\n");
+                free(cab);
                 break;
+
+            case 11:
+                cab=le_cabecalho(dados);
+                imprime_por_niveis(dados, cab->pos_cabeca);
+                printf("\n");
+                free(cab);
+                break;
+
+            case 12:
+                printa_cabecalho(dados);
+            break;
 
             default:
                 printf("Opcao invalida!!\n");

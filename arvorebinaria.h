@@ -26,6 +26,11 @@ typedef struct {
   int dir;
 } Livro;
 
+typedef struct {
+  int pos;  // Posição do nó no arquivo
+  int nivel;  // Nível do nó
+} NoFila;
+
 // Função auxiliar para encontrar o sucessor (o menor nó na subárvore direita)
 int encontrar_sucessor(FILE *dados, int pos_atual);
 
@@ -142,5 +147,20 @@ void eliminaBranco(char *destino, char *branco);
 // pre-condicao: nenhuma
 // pos-condicao: as operacoes do menu sao impressas na tela
 void printMenu();
+
+// Imprime a árvore binária no formato [chave, [subEsquerda, subDireita]]
+// pre-condicao: arquivo de dados aberto e posição inicial válida (pos_raiz)
+// pos-condicao: imprime a árvore no formato especificado recursivamente
+void imprime_arvore_lista(FILE *dados, int pos_atual);
+
+// Imprime a árvore binária em níveis (um nível por linha)
+// pre-condicao: arquivo de dados aberto e posição inicial válida (pos_raiz)
+// pos-condicao: imprime a árvore nível a nível em ordem de BFS (largura)
+void imprime_por_niveis(FILE *dados, int pos_raiz);
+
+// Enfileira um nó na fila com sua posição e nível
+// pre-condicao: a fila deve estar inicializada e com espaço disponível
+// pos-condicao: o nó é adicionado à fila
+void enfileirar(NoFila fila[], int *fim, int pos, int nivel);
 
 #endif //ARVOREBINARIA_H

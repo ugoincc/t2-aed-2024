@@ -168,7 +168,7 @@ void insereLivro(FILE *dados, Livro x) {
                     escreve_livro(dados, livro_atual, pos_atual);
                     escreve_livro(dados, x, nova_posicao);
                     escreve_cabecalho(dados, cab);
-                    printf("Livro inserido à esquerda.\n");
+                    printf("Livro inserido a esquerda.\n");
                     break;
                 } else {
                     pos_atual = livro_atual.esq;
@@ -179,7 +179,7 @@ void insereLivro(FILE *dados, Livro x) {
                     escreve_livro(dados, livro_atual, pos_atual);
                     escreve_livro(dados, x, nova_posicao);
                     escreve_cabecalho(dados, cab);
-                    printf("Livro inserido à direita.\n");
+                    printf("Livro inserido a direita.\n");
                     break;
                 } else {
                     pos_atual = livro_atual.dir;
@@ -202,7 +202,7 @@ void printPosLivre(FILE *dados) {
 
     int pos_livre = cab->pos_livre;
     if (pos_livre == -1) {
-        printf("Não há posições livres disponíveis.\n");
+        printf("Posicao livre: -1\n");
         free(cab);
         return;
     }
@@ -459,6 +459,81 @@ void printMenu() {
   printf(" 7 - Calcular Total\n");
   printf(" 8 - Carregar Arquivo\n");
   printf(" 9 - Imprimir Posicoes Livres\n");
+  printf(" 10 - Imprimir Arvore em Lista\n");
+  printf(" 11 - Imprimir Arvore por Niveis\n");
   printf(" 0 - Fechar Programa\n");
   printf("\n\n");
+}
+
+// Imprime a árvore binária no formato [chave, [subEsquerda, subDireita]]
+// pre-condicao: arquivo de dados aberto e posição inicial válida (pos_raiz)
+// pos-condicao: imprime a árvore no formato especificado recursivamente
+void imprime_arvore_lista(FILE *dados, int pos_atual) {
+    if (pos_atual == -1) {
+        printf("[ ]");  // Imprime subárvore vazia
+        return;
+    }
+
+    Livro livro_atual = le_livro(dados, pos_atual);
+
+    printf("[%d, ", livro_atual.codigo);  // Imprime a chave do livro
+
+    // Imprime a subárvore esquerda
+    imprime_arvore_lista(dados, livro_atual.esq);
+
+    printf(", ");  // Separador entre subárvores
+
+    // Imprime a subárvore direita
+    imprime_arvore_lista(dados, livro_atual.dir);
+
+    printf("]");  // Fecha o nó atual
+}
+
+// Enfileira um nó na fila com sua posição e nível
+// pre-condicao: a fila deve estar inicializada e com espaço disponível
+// pos-condicao: o nó é adicionado à fila
+void enfileirar(NoFila fila[], int *fim, int pos, int nivel) {
+    fila[*fim].pos = pos;
+    fila[*fim].nivel = nivel;
+    (*fim)++;
+}
+
+// Imprime a árvore binária em níveis (um nível por linha)
+// pre-condicao: arquivo de dados aberto e posição inicial válida (pos_raiz)
+// pos-condicao: imprime a árvore nível a nível em ordem de BFS (largura)
+void imprime_por_niveis(FILE *dados, int pos_raiz) {
+    if (pos_raiz == -1) {
+        printf("A árvore está vazia.\n");
+        return;
+    }
+
+    NoFila fila[1000];
+    int inicio = 0, fim = 0;
+
+    enfileirar(fila, &fim, pos_raiz, 0);
+
+    int nivel_atual = 0;
+
+    while (inicio < fim) {
+        NoFila no_atual = fila[inicio];
+        inicio++;
+
+        Livro livro_atual = le_livro(dados, no_atual.pos);
+
+        if (no_atual.nivel != nivel_atual) {
+            printf("\n");
+            nivel_atual = no_atual.nivel;
+        }
+
+        printf("%d ", livro_atual.codigo);
+
+        if (livro_atual.esq != -1) {
+            enfileirar(fila, &fim, livro_atual.esq, no_atual.nivel + 1);
+        }
+        if (livro_atual.dir != -1) {
+            enfileirar(fila, &fim, livro_atual.dir, no_atual.nivel + 1);
+        }
+    }
+
+    printf("\n");
 }
