@@ -5,6 +5,8 @@
 
 int main() {
     int opcao, target;
+    int total_livros =0;
+    int total_estoque = 0;
     char arquivoTexto[50];
     Livro livro_encontrado;
     cabecalho* cab = NULL;
@@ -69,8 +71,11 @@ int main() {
                 break;
 
             case 7:
-                //calcula_total(dados);
-                //break;
+                cab = le_cabecalho(dados);
+                calcula_total(dados, cab->pos_cabeca, &total_livros, &total_estoque);
+                free(cab);
+                printf("Total de Livros: %d\n Em estoque: %d\n", total_livros, total_estoque);
+                break;
 
             case 8:
                 printf("Entre com o nome do arquivo txt (arq.txt):\n");

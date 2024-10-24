@@ -70,7 +70,7 @@ void printPosLivre(FILE *dados);
 // Imprime a quantidade total de livros cadastrados
 // pre-condicao: arquivo de dados aberto e livros cadastrados
 // pos-codicao:imprime na tela quantidade de livros unicos e em estoque
-void calcula_total(FILE *dados);
+void calcula_total(FILE *dados, int pos_atual, int *total_livros, int *total_estoque);
 
 // Busca e imprime apenas livro de codigo informado caso exista
 //  pre-condicao: arquivo de dados aberto

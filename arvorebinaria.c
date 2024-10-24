@@ -222,30 +222,18 @@ void printPosLivre(FILE *dados) {
 // Imprime a quantidade total de livros cadastrados
 // pre-condicao: arquivo de dados aberto e livros cadastrados
 // pos-codicao: quantidade de livros mostrada
-void calcula_total(FILE *dados) {
-  // if (dados == NULL) {
-  //   printf("Arquivo de dados inválido!\n");
-  //   return;
-  // }
-  //
-  // Livro aux;
-  // int estoque_total = 0;
-  // int livros_unicos = 0;
-  // cabecalho *cab = le_cabecalho(dados);
-  // aux = le_livro(dados, cab->pos_cabeca);
-  //
-  // while (aux.prox != -1) {
-  //   livros_unicos++;
-  //   estoque_total += aux.estoque;
-  //   aux = le_livro(dados, aux.prox);
-  // }
-  //
-  // printf("\nLivros da biblioteca:\n");
-  // printf("%d livros distintos.\n", livros_unicos);
-  // printf("%d em estoque.\n", estoque_total);
-  //
-  // free(cab);
-  // rewind(dados);
+void calcula_total(FILE *dados, int pos_atual, int *total_livros, int *total_estoque) {
+
+    if (pos_atual == -1) {
+        return;  }
+
+    Livro livro_atual = le_livro(dados, pos_atual);
+    (*total_livros)++;  // Incrementa o número total de livros
+    *total_estoque += livro_atual.estoque;
+    calcula_total(dados, livro_atual.esq, total_livros, total_estoque);
+
+    calcula_total(dados, livro_atual.dir, total_livros, total_estoque);
+
 }
 
 // Função para imprimir as informações de um livro
