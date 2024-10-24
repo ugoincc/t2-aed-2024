@@ -195,101 +195,91 @@ void imprimir_livro(Livro info) {
 // Busca e imprime apenas livro de codigo informado caso exista
 //  pre-condicao: arquivo de dados aberto
 //  pos-condicao: as informacoes do livro serao mostradas
-void imprimir_dados_livro(FILE *dados) {
-  // if (dados == NULL) {
-  //   printf("Arquivo de dados inválido!\n");
-  //   return;
-  // }
-  //
-  // Livro aux;
-  // int target;
-  // cabecalho *cab = le_cabecalho(dados);
-  // aux = le_livro(dados, cab->pos_cabeca);
-  //
-  // printf("Digite o codigo do livro: ");
-  // scanf("%d", &target);
-  //
-  // while (aux.prox != -1) {
-  //   if (aux.codigo == target) {
-  //     printf("\nCodigo: %d, Titulo: %s, Autor: %s, Editora: %s, Edicao: %d, "
-  //            "Ano: "
-  //            "%d, Preco: %.2lf, Estoque: %u\n",
-  //            aux.codigo, aux.titulo, aux.autor, aux.editora, aux.edicao,
-  //            aux.ano, aux.preco, aux.estoque);
-  //     rewind(dados);
-  //     return;
-  //   }
-  //   aux = le_livro(dados, aux.prox);
-  // }
-  //
-  // printf("Livro de codigo %d nao encontrado!\n", target);
-  // free(cab);
-  // rewind(dados);
+Livro busca_livro(FILE *dados, int codigo) {
+  cabecalho *cab = le_cabecalho(dados);
+  int pos_atual = cab->pos_cabeca;
+  free(cab);
+
+  while (pos_atual != -1) {
+    Livro livro_atual = le_livro(dados, pos_atual);
+
+    if (codigo == livro_atual.codigo) {
+      // Livro encontrado
+      return livro_atual;
+    } else if (codigo < livro_atual.codigo) {
+      // Se o código for menor, vá para o filho à esquerda
+      pos_atual = livro_atual.esq;
+    } else {
+      // Se o código for maior, vá para o filho à direita
+      pos_atual = livro_atual.dir;
+    }
+  }
+
+  printf("Erro: Livro com código %d não encontrado.\n", codigo);
+
+  Livro livro_vazio;
+  livro_vazio.codigo = -1; // Código inválido para indicar que não foi encontrado
+  return livro_vazio;
 }
 
 // Busca e imprime apenas livro informado caso exista
 //  pre-condicao: arquivo de dados aberto
 //  pos-condicao: as informacoes do livro serao mostradas
-void busca_titulo(FILE *dados) {
-  // if (dados == NULL) {
-  //   printf("Arquivo de dados inválido!");
-  //   return;
-  // }
-  //
-  // Livro aux;
-  // char titleStr[150];
-  // cabecalho *cab = le_cabecalho(dados);
-  // aux = le_livro(dados, cab->pos_cabeca);
-  //
-  // printf("\nDigite o titulo a ser pesquisado: ");
-  // scanf("%[^\n]%*c", titleStr);
-  //
-  // while (aux.prox != -1) {
-  //   if (strstr(aux.titulo, titleStr) != 0) {
-  //     printf("\nCodigo: %d, Titulo: %s, Autor: %s, Editora: %s, Edicao: %d, "
-  //            "Ano: "
-  //            "%d, Preco: %.2lf, Estoque: %u\n",
-  //            aux.codigo, aux.titulo, aux.autor, aux.editora, aux.edicao,
-  //            aux.ano, aux.preco, aux.estoque);
-  //     rewind(dados);
-  //     free(cab);
-  //     return;
-  //   }
-  //   aux = le_livro(dados, aux.prox);
-  // }
-  //
-  // printf("\nTitulo nao encontrado...\n");
-  // free(cab);
-  // rewind(dados);
+Livro* busca_titulo(FILE *dados, char* titulo) {
+  cabecalho *cab = le_cabecalho(dados);
+  int pos_atual = cab->pos_cabeca;
+  free(cab);
+
+  while (pos_atual != -1) {
+    Livro livro_atual = le_livro(dados, pos_atual);
+
+    if (codigo == livro_atual.codigo) {
+      // Livro encontrado
+      return livro_atual;
+    } else if (codigo < livro_atual.codigo) {
+      // Se o código for menor, vá para o filho à esquerda
+      pos_atual = livro_atual.esq;
+    } else {
+      // Se o código for maior, vá para o filho à direita
+      pos_atual = livro_atual.dir;
+    }
+  }
+
+  printf("Erro: Livro com código %d não encontrado.\n", codigo);
+
+  Livro livro_vazio;
+  livro_vazio.codigo = -1;
+  return livro_vazio;
 }
 
 // Busca e imprime apenas livros do autor informado
 //  pre-condicao: arquivo de dados aberto
 //  pos-condicao: os livros sao listados
-void busca_autor(FILE *dados) {
-  if (dados == NULL) {
-    printf("Arquivo de dados inválido!");
-    return;
+void busca_autor(FILE *dados, char* autor) {
+  cabecalho *cab = le_cabecalho(dados);
+  int pos_atual = cab->pos_cabeca;
+  free(cab);
+
+  while (pos_atual != -1) {
+    Livro livro_atual = le_livro(dados, pos_atual);
+
+    if (codigo == livro_atual.codigo) {
+      // Livro encontrado
+      return livro_atual;
+    } else if (codigo < livro_atual.codigo) {
+      // Se o código for menor, vá para o filho à esquerda
+      pos_atual = livro_atual.esq;
+    } else {
+      // Se o código for maior, vá para o filho à direita
+      pos_atual = livro_atual.dir;
+    }
   }
 
-  Livro aux;
-  char autorStr[200];
-  cabecalho *cab = le_cabecalho(dados);
-  aux = le_livro(dados, cab->pos_cabeca);
+  printf("Erro: Livro com código %d não encontrado.\n", codigo);
 
-  printf("Digite o autor a ser pesquisado: ");
-  scanf("%[^\n]%*c", autorStr);
-
-  // while (aux.prox != -1) {
-  //   if (strstr(aux.autor, autorStr) != 0) {
-  //     printf("Titulo: %s\n", aux.titulo);
-  //   }
-  //    aux = le_livro(dados, aux.prox);
-  // }
-
-  printf("\nBusca Finalizada...\n");
-  free(cab);
-  rewind(dados);
+  Livro livro_vazio;
+  livro_vazio.codigo = -1;
+  return livro_vazio;
 }
 
 // Imprime apenas o codigo, o titulo, autor, e quantidade em estoque de todos

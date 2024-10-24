@@ -6,6 +6,7 @@
 int main() {
     int opcao;
     char arquivoTexto[50];
+    Livro livro_encontrado;
     FILE *dados = fopen("ArquivoDados.bin", "rb+");
 
     if (dados == NULL) {
@@ -24,11 +25,18 @@ int main() {
 
             case 2:
                 //remover_livro(dados);
-                    break;
+                break;
 
             case 3:
-                //imprimir_dados_livro(dados);
-                    break;
+                int target;
+                printf("Digite o codigo do livro: ");
+                scanf("%d", &target);
+                livro_encontrado = busca_livro(dados, target);
+                    if(livro_encontrado.codigo != -1) {
+                        imprimir_livro(livro_encontrado);
+                    }
+                break;
+
 
             case 4:{
                 cabecalho *cab = le_cabecalho(dados);
@@ -38,31 +46,46 @@ int main() {
             }
 
             case 5:
-                //busca_autor(dados);
-                    break;
+                char autorStr[200];
+                printf("Digite o autor a ser pesquisado: ");
+                scanf("%[^\n]%*c", autorStr);
+                busca_autor(dados, autorStr);
+                livro_encontrado = busca_livro(dados, target);
+                    if(livro_encontrado.codigo != -1) {
+                        imprimir_livro(livro_encontrado);
+                    }
+                free(autorStr);
+                break;
 
             case 6:
-                //busca_titulo(dados);
-                    break;
+                char tituloStr[200];
+                printf("Digite o titulo a ser pesquisado: ");
+                scanf("%[^\n]%*c", tituloStr);
+                livro_encontrado = busca_titulo(dados, tituloStr);;
+                    if(livro_encontrado.codigo != -1) {
+                        imprimir_livro(livro_encontrado);
+                    }
+                free(tituloStr);
+                break;
 
             case 7:
                 //calcula_total(dados);
-                    break;
+                //break;
 
             case 8:
                 printf("Entre com o nome do arquivo txt (arq.txt):\n");
-            printf("> ");
-            scanf("%[^\n]%*c", arquivoTexto);
-            lerArquivoEntrada(arquivoTexto, dados);
-            break;
+                printf("> ");
+                scanf("%[^\n]%*c", arquivoTexto);
+                lerArquivoEntrada(arquivoTexto, dados);
+                break;
 
             case 9:
                 // printPosLivre(dados);
-                    break;
+                // break;
 
             case 11:
                 printa_cabecalho(dados);
-            break;
+                break;
 
             default:
                 printf("Opcao invalida!!\n");

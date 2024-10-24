@@ -26,6 +26,13 @@ typedef struct {
   int dir;
 } Livro;
 
+// Função para imprimir as informações de um livro
+// Entrada: Ponteiro para o registro de livro
+// Saída: Dados do Livro
+// Pré-Condição: O ponteiro info deve apontar para um livro válido
+// Pós-Condição: As informações do livro são exibidas na tela
+void imprimir_livro(Livro info);
+
 // funcao auxiliar teste
 // Pre-condicao: arquivo deve estar aberto
 // Pos-condicao: printa o cabecalho
@@ -65,17 +72,17 @@ void calcula_total(FILE *dados);
 // Busca e imprime apenas livro de codigo informado caso exista
 //  pre-condicao: arquivo de dados aberto
 //  pos-condicao: as informacoes do livro serao mostradas
-void imprimir_dados_livro(FILE *dados);
+Livro busca_livro(FILE *dados, int codigo);
 
 // Busca e imprime apenas livro de titulo informado caso exista
 //  pre-condicao: arquivo de dados aberto
 //  pos-condicao: as informacoes do livro serao mostradas
-void busca_titulo(FILE *dados);
+Livro busca_titulo(FILE *dados, char* titulo);
 
 // Busca e imprime apenas livros do autor informado
 //  pre-condicao: arquivo de dados aberto
 //  pos-condicao: os livros sao listados
-void busca_autor(FILE *dados);
+Livro busca_autor(FILE *dados, char *autor);
 
 // Imprime apenas o codigo, o titulo, autor, e quantidade em estoque de todos
 // os livros do cadastro
