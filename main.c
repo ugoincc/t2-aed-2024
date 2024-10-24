@@ -7,6 +7,7 @@ int main() {
     int opcao;
     char arquivoTexto[50];
     Livro livro_encontrado;
+    cabecalho* cab = NULL;
     FILE *dados = fopen("ArquivoDados.bin", "rb+");
 
     if (dados == NULL) {
@@ -39,7 +40,7 @@ int main() {
 
 
             case 4:{
-                cabecalho *cab = le_cabecalho(dados);
+                cab = le_cabecalho(dados);
                 listar_todos(dados, cab->pos_cabeca);
                 free(cab);
                 break;
@@ -47,25 +48,20 @@ int main() {
 
             case 5:
                 char autorStr[200];
+                cab = le_cabecalho(dados);
                 printf("Digite o autor a ser pesquisado: ");
                 scanf("%[^\n]%*c", autorStr);
-                busca_autor(dados, autorStr);
-                livro_encontrado = busca_livro(dados, target);
-                    if(livro_encontrado.codigo != -1) {
-                        imprimir_livro(livro_encontrado);
-                    }
-                free(autorStr);
+                busca_autor(dados, cab->pos_cabeca, autorStr);
+                printf("\n");
                 break;
 
             case 6:
                 char tituloStr[200];
+                cab = le_cabecalho(dados);
                 printf("Digite o titulo a ser pesquisado: ");
                 scanf("%[^\n]%*c", tituloStr);
-                livro_encontrado = busca_titulo(dados, tituloStr);;
-                    if(livro_encontrado.codigo != -1) {
-                        imprimir_livro(livro_encontrado);
-                    }
-                free(tituloStr);
+                busca_titulo(dados, cab->pos_cabeca, tituloStr);
+                printf("\n");
                 break;
 
             case 7:

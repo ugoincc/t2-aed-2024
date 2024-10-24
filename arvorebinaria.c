@@ -225,62 +225,35 @@ Livro busca_livro(FILE *dados, int codigo) {
 // Busca e imprime apenas livro informado caso exista
 //  pre-condicao: arquivo de dados aberto
 //  pos-condicao: as informacoes do livro serao mostradas
-Livro* busca_titulo(FILE *dados, char* titulo) {
-  cabecalho *cab = le_cabecalho(dados);
-  int pos_atual = cab->pos_cabeca;
-  free(cab);
+void busca_titulo(FILE *dados, int pos_atual, char* tituloStr) {
+  if (pos_atual == -1) {
+    return;  }
 
-  while (pos_atual != -1) {
-    Livro livro_atual = le_livro(dados, pos_atual);
+  Livro livro_atual = le_livro(dados, pos_atual);
 
-    if (codigo == livro_atual.codigo) {
-      // Livro encontrado
-      return livro_atual;
-    } else if (codigo < livro_atual.codigo) {
-      // Se o código for menor, vá para o filho à esquerda
-      pos_atual = livro_atual.esq;
-    } else {
-      // Se o código for maior, vá para o filho à direita
-      pos_atual = livro_atual.dir;
-    }
+  busca_titulo(dados, livro_atual.esq, tituloStr);
+  if (strstr(livro_atual.titulo, tituloStr) != NULL) {
+    imprimir_livro(livro_atual);
   }
-
-  printf("Erro: Livro com código %d não encontrado.\n", codigo);
-
-  Livro livro_vazio;
-  livro_vazio.codigo = -1;
-  return livro_vazio;
+  busca_titulo(dados, livro_atual.dir, tituloStr);
 }
 
 // Busca e imprime apenas livros do autor informado
 //  pre-condicao: arquivo de dados aberto
 //  pos-condicao: os livros sao listados
-void busca_autor(FILE *dados, char* autor) {
-  cabecalho *cab = le_cabecalho(dados);
-  int pos_atual = cab->pos_cabeca;
-  free(cab);
+void busca_autor(FILE *dados, int pos_atual, char* autorStr) {
+  if (pos_atual == -1) {
+    return;  }
 
-  while (pos_atual != -1) {
-    Livro livro_atual = le_livro(dados, pos_atual);
+  Livro livro_atual = le_livro(dados, pos_atual);
 
-    if (codigo == livro_atual.codigo) {
-      // Livro encontrado
-      return livro_atual;
-    } else if (codigo < livro_atual.codigo) {
-      // Se o código for menor, vá para o filho à esquerda
-      pos_atual = livro_atual.esq;
-    } else {
-      // Se o código for maior, vá para o filho à direita
-      pos_atual = livro_atual.dir;
+  busca_autor(dados, livro_atual.esq, autorStr);
+    if (strstr(livro_atual.autor, autorStr) != NULL) {
+      imprimir_livro(livro_atual);
     }
-  }
-
-  printf("Erro: Livro com código %d não encontrado.\n", codigo);
-
-  Livro livro_vazio;
-  livro_vazio.codigo = -1;
-  return livro_vazio;
+  busca_autor(dados, livro_atual.dir, autorStr);
 }
+
 
 // Imprime apenas o codigo, o titulo, autor, e quantidade em estoque de todos
 // os livros do cadastro

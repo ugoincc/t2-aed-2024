@@ -77,12 +77,12 @@ Livro busca_livro(FILE *dados, int codigo);
 // Busca e imprime apenas livro de titulo informado caso exista
 //  pre-condicao: arquivo de dados aberto
 //  pos-condicao: as informacoes do livro serao mostradas
-Livro busca_titulo(FILE *dados, char* titulo);
+void busca_titulo(FILE *dados, int pos_atual, char* tituloStr);
 
 // Busca e imprime apenas livros do autor informado
 //  pre-condicao: arquivo de dados aberto
 //  pos-condicao: os livros sao listados
-Livro busca_autor(FILE *dados, char *autor);
+void busca_autor(FILE *dados, int pos_atual, char *autorStr);
 
 // Imprime apenas o codigo, o titulo, autor, e quantidade em estoque de todos
 // os livros do cadastro

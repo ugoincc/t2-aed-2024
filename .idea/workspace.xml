@@ -24,9 +24,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26de937c-e745-43bf-b4d0-28ea68ebcc50" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/arvorebinaria.c" beforeDir="false" afterPath="$PROJECT_DIR$/arvorebinaria.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/arvorebinaria.h" beforeDir="false" afterPath="$PROJECT_DIR$/arvorebinaria.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/entrada.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_deps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/t2_aed_2024.dir/arvorebinaria.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/t2_aed_2024.dir/arvorebinaria.c.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/t2_aed_2024.dir/main.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/t2_aed_2024.dir/main.c.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/t2_aed_2024.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/t2_aed_2024.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -88,6 +94,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Users/Hugo/CLionProjects/t2-aed-2024/main.c",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -121,7 +128,7 @@
       <updated>1729627012570</updated>
       <workItem from="1729627013945" duration="7194000" />
       <workItem from="1729781094080" duration="3849000" />
-      <workItem from="1729785328274" duration="5000" />
+      <workItem from="1729785328274" duration="3221000" />
     </task>
     <servers />
   </component>
