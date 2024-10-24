@@ -22,7 +22,8 @@ typedef struct {
   int ano;
   double preco;
   unsigned int estoque;
-  int prox;
+  int esq;
+  int dir;
 } Livro;
 
 // funcao auxiliar teste
@@ -49,7 +50,7 @@ void remove_item(FILE *arq, int codigo);
 // binario pre-condicao: arquivo de dados deve existir e estar aberto
 // pos-condicao: livro passado é inserido no arquivo binario, na posicao livre
 // ou no topo
-void insere_na_cabeca(FILE *dados, Livro x);
+void insereLivro(FILE *dados, Livro x);
 
 // Imprime as posicoes livres do arquivo de dados
 // pre-condicao: arquivo de dados deve existir e estar aberto
@@ -76,11 +77,11 @@ void busca_titulo(FILE *dados);
 //  pos-condicao: os livros sao listados
 void busca_autor(FILE *dados);
 
-// Imprime apenas o codigo, o titulo, autor, e quantidade em estoque de todos os
-// livros do cadastro
+// Imprime apenas o codigo, o titulo, autor, e quantidade em estoque de todos
+// os livros do cadastro
 //  pre-condicao: arquivo de dados aberto
-//  pos-condicao: os livros sao listados
-void listar_todos(FILE *dados);
+//  pos-condicao: os livros sao listados "in-ordem"
+void listar_todos(FILE *dados, int pos_atual);
 
 // Escrita do livro
 // pre-condicao: arquivo de dados deve existir e estar aberto, livro e posicao

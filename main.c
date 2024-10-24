@@ -10,7 +10,7 @@ int main() {
 
     if (dados == NULL) {
         dados = fopen("ArquivoDados.bin", "wb+");
-        //cria_lista_vazia(dados);
+        cria_lista_vazia(dados);
     }
 
     printMenu();
@@ -19,53 +19,56 @@ int main() {
     while (opcao != 0) {
         switch (opcao) {
             case 1:
-                //cadastrar_livro(dados);
+                cadastrar_livro(dados);
             break;
 
             case 2:
                 //remover_livro(dados);
-            break;
+                    break;
 
             case 3:
                 //imprimir_dados_livro(dados);
-            break;
+                    break;
 
-            case 4:
-                //listar_todos(dados);
-            break;
+            case 4:{
+                cabecalho *cab = le_cabecalho(dados);
+                listar_todos(dados, cab->pos_cabeca);
+                free(cab);
+                break;
+            }
 
             case 5:
                 //busca_autor(dados);
-            break;
+                    break;
 
             case 6:
                 //busca_titulo(dados);
-            break;
+                    break;
 
             case 7:
-               //calcula_total(dados);
-            break;
+                //calcula_total(dados);
+                    break;
 
             case 8:
                 printf("Entre com o nome do arquivo txt (arq.txt):\n");
             printf("> ");
             scanf("%[^\n]%*c", arquivoTexto);
-            //lerArquivoEntrada(arquivoTexto, dados);
+            lerArquivoEntrada(arquivoTexto, dados);
             break;
 
             case 9:
-               // printPosLivre(dados);
-            break;
+                // printPosLivre(dados);
+                    break;
 
             case 11:
-               // printa_cabecalho(dados);
+                printa_cabecalho(dados);
             break;
 
             default:
                 printf("Opcao invalida!!\n");
         }
         printf("\n");
-       // printMenu();
+        printMenu();
         printf("> ");
         scanf("%d%*c", &opcao);
     }
