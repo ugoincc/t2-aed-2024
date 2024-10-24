@@ -1,0 +1,7 @@
+# Ignora todos os arquivos
+*
+
+# Exceção para arquivos .c e .h
+!*.c
+!*.h
+!entrada_modelo.txt
