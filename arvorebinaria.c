@@ -46,14 +46,13 @@ void cadastrar_livro(FILE *dados) {
   printf("Entre com o estoque: \n");
   printf("> ");
   scanf("%u%*c", &aux.estoque);
-
   for (char *p = precoStr; *p; ++p) {
     if (*p == ',') {
       *p = '.';
     }
   }
   aux.preco = atof(precoStr);
-  insere_na_cabeca(dados, aux);
+  insereLivro(dados, aux);
   printf("Livro cadastrado com sucesso!\n");
 }
 
@@ -71,45 +70,6 @@ void remover_livro(FILE *dados) {
 // Pre-condicao: arquivo deve estar aberto e ser um arquivo de lista
 // Pos-condicao: no retirado da lista caso pertenca a ela
 void remove_item(FILE *dados, int target) {
-  if (dados == NULL) {
-    printf("Arquivo de dados inválido!\n");
-    return;
-  }
-
-  cabecalho *cab = le_cabecalho(dados);
-  int pos_aux = cab->pos_cabeca;
-  int pos_ant = cab->pos_cabeca;
-  Livro aux = le_livro(dados, pos_aux);
-
-  while ((pos_aux != -1) && (aux.codigo != target)) {
-    pos_ant = pos_aux;
-    pos_aux = aux.prox;
-    aux = le_livro(dados, pos_aux);
-  }
-
-  if (pos_aux != -1) { // encontrou o elemento
-    printf("\nLivro encontrado!\n");
-    if (pos_ant == pos_aux) { // remocao na cabe ca
-      cab->pos_cabeca = aux.prox;
-    } else { // remocao no meio
-      Livro ant = le_livro(dados, pos_ant);
-      ant.prox = aux.prox;
-      escreve_livro(dados, ant, pos_ant);
-    }
-
-    aux.prox = cab->pos_livre; // torna o no removido um no livre
-    cab->pos_livre = pos_aux;
-    escreve_livro(dados, aux, pos_aux);
-    escreve_cabecalho(dados, cab);
-    printf("Livro de codigo: %d removido!\n", target);
-
-    free(cab);
-    rewind(dados);
-    return;
-  }
-
-  printf("\nLivro nao encontrado...\n");
-  free(cab);
   rewind(dados);
 }
 
@@ -117,20 +77,56 @@ void remove_item(FILE *dados, int target) {
 // binario pre-condicao: arquivo de dados deve existir e estar aberto
 // pos-condicao: livro passado é inserido no arquivo binario, na posicao livre
 // ou no topo
-void insere_na_cabeca(FILE *dados, Livro x) {
+void insereLivro(FILE *dados, Livro x) {
   cabecalho *cab = le_cabecalho(dados);
-  x.prox = cab->pos_cabeca;
-  if (cab->pos_livre == -1) { // nao ha nos livres, entao usar o topo
+
+    x.esq = -1;
+    x.dir = -1;
+
+  if(cab->pos_cabeca == -1) {
     escreve_livro(dados, x, cab->pos_topo);
     cab->pos_cabeca = cab->pos_topo;
     cab->pos_topo++;
-  } else { // usar no da lista de livres
-    Livro aux = le_livro(dados, cab->pos_livre);
-    escreve_livro(dados, x, cab->pos_livre);
-    cab->pos_cabeca = cab->pos_livre;
-    cab->pos_livre = aux.prox;
+    escreve_cabecalho(dados, cab);
+    printf("Livro inserido como raiz da arvore.\n");
+  } else {
+    int pos_atual = cab->pos_cabeca;
+
+
+    while (1) {
+    Livro livro_atual = le_livro(dados, pos_atual);
+
+      if(x.codigo < livro_atual.codigo) {
+        if(livro_atual.esq == -1) {
+          livro_atual.esq = cab->pos_topo;
+          escreve_livro(dados, livro_atual, pos_atual);
+          escreve_livro(dados, x, cab->pos_topo);
+          cab->pos_topo++;
+          escreve_cabecalho(dados, cab);
+          printf("Livro inserido a esquerda.\n");
+          break;
+          } else{
+              pos_atual = livro_atual.esq;
+          }
+
+      }else if (x.codigo > livro_atual.codigo){
+      if(livro_atual.dir == -1){
+        livro_atual.dir = cab->pos_topo;
+        escreve_livro(dados, livro_atual, pos_atual);
+        escreve_livro(dados, x, cab->pos_topo);
+        cab->pos_topo++;
+        escreve_cabecalho(dados, cab);
+        printf("Livro inserido a direita.\n");
+        break;
+      } else {
+      pos_atual = livro_atual.dir;
+      }
+      } else {
+                printf("Erro: Código de livro duplicado.\n");
+                break;
+                }
+    }
   }
-  escreve_cabecalho(dados, cab);
   free(cab);
 }
 
@@ -138,114 +134,133 @@ void insere_na_cabeca(FILE *dados, Livro x) {
 // pre-condicao: arquivo de dados deve existir e estar aberto
 // pos-condicao: imprime na tela todas as posicoes livres do arquivo de index
 void printPosLivre(FILE *dados) {
-  cabecalho *cab = le_cabecalho(dados);
-  Livro vazio = le_livro(dados, cab->pos_livre);
-  printf("Posicao livre = %d\n", cab->pos_livre);
-  if (cab->pos_livre != -1)
-    while (vazio.prox != -1) {
-      printf("Posicao livre = %d\n", vazio.prox);
-      vazio = le_livro(dados, vazio.prox);
-    }
+  // cabecalho *cab = le_cabecalho(dados);
+  // Livro vazio = le_livro(dados, cab->pos_livre);
+  // printf("Posicao livre = %d\n", cab->pos_livre);
+  // if (cab->pos_livre != -1)
+  //   while (vazio.prox != -1) {
+  //     printf("Posicao livre = %d\n", vazio.prox);
+  //     vazio = le_livro(dados, vazio.prox);
+  //   }
 }
 
 // Imprime a quantidade total de livros cadastrados
 // pre-condicao: arquivo de dados aberto e livros cadastrados
 // pos-codicao: quantidade de livros mostrada
 void calcula_total(FILE *dados) {
-  if (dados == NULL) {
-    printf("Arquivo de dados inválido!\n");
-    return;
-  }
+  // if (dados == NULL) {
+  //   printf("Arquivo de dados inválido!\n");
+  //   return;
+  // }
+  //
+  // Livro aux;
+  // int estoque_total = 0;
+  // int livros_unicos = 0;
+  // cabecalho *cab = le_cabecalho(dados);
+  // aux = le_livro(dados, cab->pos_cabeca);
+  //
+  // while (aux.prox != -1) {
+  //   livros_unicos++;
+  //   estoque_total += aux.estoque;
+  //   aux = le_livro(dados, aux.prox);
+  // }
+  //
+  // printf("\nLivros da biblioteca:\n");
+  // printf("%d livros distintos.\n", livros_unicos);
+  // printf("%d em estoque.\n", estoque_total);
+  //
+  // free(cab);
+  // rewind(dados);
+}
 
-  Livro aux;
-  int estoque_total = 0;
-  int livros_unicos = 0;
-  cabecalho *cab = le_cabecalho(dados);
-  aux = le_livro(dados, cab->pos_cabeca);
-
-  while (aux.prox != -1) {
-    livros_unicos++;
-    estoque_total += aux.estoque;
-    aux = le_livro(dados, aux.prox);
-  }
-
-  printf("\nLivros da biblioteca:\n");
-  printf("%d livros distintos.\n", livros_unicos);
-  printf("%d em estoque.\n", estoque_total);
-
-  free(cab);
-  rewind(dados);
+// Função para imprimir as informações de um livro
+// Entrada: Ponteiro para o registro de livro
+// Saída: Dados do Livro
+// Pré-Condição: O ponteiro info deve apontar para um livro válido
+// Pós-Condição: As informações do livro são exibidas na tela
+void imprimir_livro(Livro info) {
+    printf("\nInformacoes do Livro:\n");
+    printf("Codigo: %d\n", info.codigo);
+    printf("Titulo: %s\n", info.titulo);
+    printf("Autor: %s\n", info.autor);
+    printf("Editora: %s\n", info.editora);
+    printf("Edicao: %d\n", info.edicao);
+    printf("Ano: %d\n", info.ano);
+    printf("Preco: R$%.2f\n", info.preco);
+    printf("Estoque: %d\n", info.estoque);
+    printf("Proxima esquerda: %d\n" , info.esq);
+    printf ("Proxima direita: %d\n", info.dir);
 }
 
 // Busca e imprime apenas livro de codigo informado caso exista
 //  pre-condicao: arquivo de dados aberto
 //  pos-condicao: as informacoes do livro serao mostradas
 void imprimir_dados_livro(FILE *dados) {
-  if (dados == NULL) {
-    printf("Arquivo de dados inválido!\n");
-    return;
-  }
-
-  Livro aux;
-  int target;
-  cabecalho *cab = le_cabecalho(dados);
-  aux = le_livro(dados, cab->pos_cabeca);
-
-  printf("Digite o codigo do livro: ");
-  scanf("%d", &target);
-
-  while (aux.prox != -1) {
-    if (aux.codigo == target) {
-      printf("\nCodigo: %d, Titulo: %s, Autor: %s, Editora: %s, Edicao: %d, "
-             "Ano: "
-             "%d, Preco: %.2lf, Estoque: %u\n",
-             aux.codigo, aux.titulo, aux.autor, aux.editora, aux.edicao,
-             aux.ano, aux.preco, aux.estoque);
-      rewind(dados);
-      return;
-    }
-    aux = le_livro(dados, aux.prox);
-  }
-
-  printf("Livro de codigo %d nao encontrado!\n", target);
-  free(cab);
-  rewind(dados);
+  // if (dados == NULL) {
+  //   printf("Arquivo de dados inválido!\n");
+  //   return;
+  // }
+  //
+  // Livro aux;
+  // int target;
+  // cabecalho *cab = le_cabecalho(dados);
+  // aux = le_livro(dados, cab->pos_cabeca);
+  //
+  // printf("Digite o codigo do livro: ");
+  // scanf("%d", &target);
+  //
+  // while (aux.prox != -1) {
+  //   if (aux.codigo == target) {
+  //     printf("\nCodigo: %d, Titulo: %s, Autor: %s, Editora: %s, Edicao: %d, "
+  //            "Ano: "
+  //            "%d, Preco: %.2lf, Estoque: %u\n",
+  //            aux.codigo, aux.titulo, aux.autor, aux.editora, aux.edicao,
+  //            aux.ano, aux.preco, aux.estoque);
+  //     rewind(dados);
+  //     return;
+  //   }
+  //   aux = le_livro(dados, aux.prox);
+  // }
+  //
+  // printf("Livro de codigo %d nao encontrado!\n", target);
+  // free(cab);
+  // rewind(dados);
 }
 
 // Busca e imprime apenas livro informado caso exista
 //  pre-condicao: arquivo de dados aberto
 //  pos-condicao: as informacoes do livro serao mostradas
 void busca_titulo(FILE *dados) {
-  if (dados == NULL) {
-    printf("Arquivo de dados inválido!");
-    return;
-  }
-
-  Livro aux;
-  char titleStr[150];
-  cabecalho *cab = le_cabecalho(dados);
-  aux = le_livro(dados, cab->pos_cabeca);
-
-  printf("\nDigite o titulo a ser pesquisado: ");
-  scanf("%[^\n]%*c", titleStr);
-
-  while (aux.prox != -1) {
-    if (strstr(aux.titulo, titleStr) != 0) {
-      printf("\nCodigo: %d, Titulo: %s, Autor: %s, Editora: %s, Edicao: %d, "
-             "Ano: "
-             "%d, Preco: %.2lf, Estoque: %u\n",
-             aux.codigo, aux.titulo, aux.autor, aux.editora, aux.edicao,
-             aux.ano, aux.preco, aux.estoque);
-      rewind(dados);
-      free(cab);
-      return;
-    }
-    aux = le_livro(dados, aux.prox);
-  }
-
-  printf("\nTitulo nao encontrado...\n");
-  free(cab);
-  rewind(dados);
+  // if (dados == NULL) {
+  //   printf("Arquivo de dados inválido!");
+  //   return;
+  // }
+  //
+  // Livro aux;
+  // char titleStr[150];
+  // cabecalho *cab = le_cabecalho(dados);
+  // aux = le_livro(dados, cab->pos_cabeca);
+  //
+  // printf("\nDigite o titulo a ser pesquisado: ");
+  // scanf("%[^\n]%*c", titleStr);
+  //
+  // while (aux.prox != -1) {
+  //   if (strstr(aux.titulo, titleStr) != 0) {
+  //     printf("\nCodigo: %d, Titulo: %s, Autor: %s, Editora: %s, Edicao: %d, "
+  //            "Ano: "
+  //            "%d, Preco: %.2lf, Estoque: %u\n",
+  //            aux.codigo, aux.titulo, aux.autor, aux.editora, aux.edicao,
+  //            aux.ano, aux.preco, aux.estoque);
+  //     rewind(dados);
+  //     free(cab);
+  //     return;
+  //   }
+  //   aux = le_livro(dados, aux.prox);
+  // }
+  //
+  // printf("\nTitulo nao encontrado...\n");
+  // free(cab);
+  // rewind(dados);
 }
 
 // Busca e imprime apenas livros do autor informado
@@ -265,12 +280,12 @@ void busca_autor(FILE *dados) {
   printf("Digite o autor a ser pesquisado: ");
   scanf("%[^\n]%*c", autorStr);
 
-  while (aux.prox != -1) {
-    if (strstr(aux.autor, autorStr) != 0) {
-      printf("Titulo: %s\n", aux.titulo);
-    }
-    aux = le_livro(dados, aux.prox);
-  }
+  // while (aux.prox != -1) {
+  //   if (strstr(aux.autor, autorStr) != 0) {
+  //     printf("Titulo: %s\n", aux.titulo);
+  //   }
+  //    aux = le_livro(dados, aux.prox);
+  // }
 
   printf("\nBusca Finalizada...\n");
   free(cab);
@@ -280,33 +295,15 @@ void busca_autor(FILE *dados) {
 // Imprime apenas o codigo, o titulo, autor, e quantidade em estoque de todos
 // os livros do cadastro
 //  pre-condicao: arquivo de dados aberto
-//  pos-condicao: os livros sao listados
-void listar_todos(FILE *dados) {
-  if (dados == NULL) {
-    printf("Arquivo de dados inválido!");
-    return;
-  }
-
-  Livro aux;
-  cabecalho *cab = le_cabecalho(dados);
-  if(cab->pos_cabeca == -1){
-    printf("Lista Vazia...\n");
-    free(cab);
-    rewind(dados);
-    return;
-  }
-  aux = le_livro(dados, cab->pos_cabeca);
-  printf("\nCodigo: %d, Titulo: %s, Autor: %s, Estoque: %u\n", aux.codigo,
-     aux.titulo, aux.autor, aux.estoque);
-
-  while (aux.prox != -1) {
-    aux = le_livro(dados, aux.prox);
-    printf("\nCodigo: %d, Titulo: %s, Autor: %s, Estoque: %u\n", aux.codigo,
-           aux.titulo, aux.autor, aux.estoque);
-  }
-
-  rewind(dados);
-  free(cab);
+//  pos-condicao: os livros sao listados "in-ordem"
+void listar_todos(FILE *dados, int pos_atual) {
+    if (pos_atual == -1) {
+        return;
+    }
+    Livro livro_atual = le_livro(dados, pos_atual);
+    listar_todos(dados, livro_atual.esq);
+    imprimir_livro(livro_atual);
+    listar_todos(dados, livro_atual.dir);
 }
 
 // Escrita do livro
@@ -314,8 +311,7 @@ void listar_todos(FILE *dados) {
 // devem ser validos pos-condicao: armazena a informacao do livro passado na
 // sua posicao correspondente no arquivo de dados
 void escreve_livro(FILE *dados, Livro x, int pos) {
-  fseek(dados, sizeof(cabecalho), SEEK_SET);
-  fseek(dados, pos * sizeof(Livro), SEEK_CUR);
+  fseek(dados, sizeof(cabecalho) + pos * sizeof(Livro), SEEK_SET);
   fwrite(&x, sizeof(Livro), 1, dados);
 }
 
@@ -376,10 +372,10 @@ void cria_lista_vazia(FILE *arq) {
 // arquivo deve ser valido pos-condicao: as informacoes lidas do arquivo de
 // texto sao gravadas no arquivo binario
 void lerArquivoEntrada(char *fileName, FILE *dados) {
-  char teste, branco[200], precoStr[20];
+  char branco[200], precoStr[20];
   Livro aux;
-  FILE *f;
-  f = fopen(fileName, "r");
+  FILE *f = fopen(fileName, "r");
+
   if (f != NULL) {
     while (fscanf(f, " %d ;", &aux.codigo) == 1) {
       fscanf(f, " %[^;];", branco);
@@ -400,7 +396,7 @@ void lerArquivoEntrada(char *fileName, FILE *dados) {
       }
 
       aux.preco = atof(precoStr);
-      insere_na_cabeca(dados, aux);
+      insereLivro(dados, aux);
     }
     printf("\nLeitura de arquivo concluida!!\n");
     rewind(dados);
