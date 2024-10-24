@@ -59,11 +59,87 @@ void cadastrar_livro(FILE *dados) {
 // solicita um livro para ser removido
 // Pre-condicao: arquivo deve estar aberto e ser um arquivo de lista
 // Pos-condicao: no retirado da lista caso pertenca a ela
-void remover_livro(FILE *dados) {
-  int target;
-  printf("Digite o codigo do livro: ");
-  scanf("%d", &target);
-  remove_item(dados, target);
+int remover_livro(FILE *dados, int pos_atual, int codigo, cabecalho *cab) {
+    if (pos_atual == -1) {
+        printf("Livro não encontrado.\n");
+        return -1;  // Livro não encontrado
+    }
+
+    Livro livro_atual = le_livro(dados, pos_atual);
+
+    // Caso o livro a ser removido tenha um código menor
+    if (codigo < livro_atual.codigo) {
+        livro_atual.esq = remover_livro(dados, livro_atual.esq, codigo, cab);
+        escreve_livro(dados, livro_atual, pos_atual);  // Atualiza o nó atual após a remoção
+        return pos_atual;
+    }
+
+    // Caso o livro a ser removido tenha um código maior
+    if (codigo > livro_atual.codigo) {
+        livro_atual.dir = remover_livro(dados, livro_atual.dir, codigo, cab);
+        escreve_livro(dados, livro_atual, pos_atual);  // Atualiza o nó atual após a remoção
+        return pos_atual;
+    }
+
+    // Caso o código seja igual, este é o livro a ser removido
+    if (codigo == livro_atual.codigo) {
+        // Caso 1: o nó é uma folha (sem filhos)
+        if (livro_atual.esq == -1 && livro_atual.dir == -1) {
+            printf("Livro removido.\n");
+
+            // Adiciona a posição removida à lista de posições livres
+            livro_atual.esq = cab->pos_livre;  // O campo esq aponta para a próxima posição livre
+            cab->pos_livre = pos_atual;  // Atualiza o cabeçalho para a posição removida
+            escreve_livro(dados, livro_atual, pos_atual);  // Escreve o nó modificado
+            return -1;  // O nó foi removido
+        }
+
+        // Caso 2: tem um único filho (à esquerda ou à direita)
+        if (livro_atual.esq == -1) {
+            printf("Livro removido com filho à direita.\n");
+            return livro_atual.dir;  // Retorna o filho à direita
+        }
+
+        if (livro_atual.dir == -1) {
+            printf("Livro removido com filho à esquerda.\n");
+            return livro_atual.esq;  // Retorna o filho à esquerda
+        }
+
+        // Caso 3: tem dois filhos
+        // Encontrar o sucessor (o menor na subárvore direita)
+        int pos_sucessor = encontrar_sucessor(dados, livro_atual.dir);
+        Livro sucessor = le_livro(dados, pos_sucessor);
+
+        // Substituir os dados do livro atual pelo sucessor
+        livro_atual.codigo = sucessor.codigo;
+        strcpy(livro_atual.titulo, sucessor.titulo);
+        strcpy(livro_atual.autor, sucessor.autor);
+        strcpy(livro_atual.editora, sucessor.editora);
+        livro_atual.edicao = sucessor.edicao;
+        livro_atual.ano = sucessor.ano;
+        livro_atual.preco = sucessor.preco;
+        livro_atual.estoque = sucessor.estoque;
+
+        // Remover o sucessor da subárvore direita
+        livro_atual.dir = remover_livro(dados, livro_atual.dir, sucessor.codigo, cab);
+
+        escreve_livro(dados, livro_atual, pos_atual);  // Atualiza o nó atual
+        return pos_atual;
+    }
+
+    return pos_atual;
+}
+
+// Função auxiliar para encontrar o sucessor (o menor nó na subárvore direita)
+int encontrar_sucessor(FILE *dados, int pos_atual) {
+    Livro livro_atual = le_livro(dados, pos_atual);
+
+    while (livro_atual.esq != -1) {
+        pos_atual = livro_atual.esq;
+        livro_atual = le_livro(dados, pos_atual);
+    }
+
+    return pos_atual;
 }
 
 // Retira um no da lista
@@ -78,56 +154,63 @@ void remove_item(FILE *dados, int target) {
 // pos-condicao: livro passado é inserido no arquivo binario, na posicao livre
 // ou no topo
 void insereLivro(FILE *dados, Livro x) {
-  cabecalho *cab = le_cabecalho(dados);
+    cabecalho *cab = le_cabecalho(dados);
 
     x.esq = -1;
     x.dir = -1;
 
-  if(cab->pos_cabeca == -1) {
-    escreve_livro(dados, x, cab->pos_topo);
-    cab->pos_cabeca = cab->pos_topo;
-    cab->pos_topo++;
-    escreve_cabecalho(dados, cab);
-    printf("Livro inserido como raiz da arvore.\n");
-  } else {
-    int pos_atual = cab->pos_cabeca;
-
-
-    while (1) {
-    Livro livro_atual = le_livro(dados, pos_atual);
-
-      if(x.codigo < livro_atual.codigo) {
-        if(livro_atual.esq == -1) {
-          livro_atual.esq = cab->pos_topo;
-          escreve_livro(dados, livro_atual, pos_atual);
-          escreve_livro(dados, x, cab->pos_topo);
-          cab->pos_topo++;
-          escreve_cabecalho(dados, cab);
-          printf("Livro inserido a esquerda.\n");
-          break;
-          } else{
-              pos_atual = livro_atual.esq;
-          }
-
-      }else if (x.codigo > livro_atual.codigo){
-      if(livro_atual.dir == -1){
-        livro_atual.dir = cab->pos_topo;
-        escreve_livro(dados, livro_atual, pos_atual);
-        escreve_livro(dados, x, cab->pos_topo);
+    int nova_posicao;
+    if (cab->pos_livre != -1) {
+        // Reutiliza uma posição livre
+        nova_posicao = cab->pos_livre;
+        Livro livro_livre = le_livro(dados, nova_posicao);
+        cab->pos_livre = livro_livre.esq;  // Atualiza a lista de posições livres
+    } else {
+        // Usa uma nova posição
+        nova_posicao = cab->pos_topo;
         cab->pos_topo++;
+    }
+
+    if (cab->pos_cabeca == -1) {
+        escreve_livro(dados, x, nova_posicao);
+        cab->pos_cabeca = nova_posicao;
         escreve_cabecalho(dados, cab);
-        printf("Livro inserido a direita.\n");
-        break;
-      } else {
-      pos_atual = livro_atual.dir;
-      }
-      } else {
+        printf("Livro inserido como raiz da arvore.\n");
+    } else {
+        int pos_atual = cab->pos_cabeca;
+        while (1) {
+            Livro livro_atual = le_livro(dados, pos_atual);
+
+            if (x.codigo < livro_atual.codigo) {
+                if (livro_atual.esq == -1) {
+                    livro_atual.esq = nova_posicao;
+                    escreve_livro(dados, livro_atual, pos_atual);
+                    escreve_livro(dados, x, nova_posicao);
+                    escreve_cabecalho(dados, cab);
+                    printf("Livro inserido à esquerda.\n");
+                    break;
+                } else {
+                    pos_atual = livro_atual.esq;
+                }
+            } else if (x.codigo > livro_atual.codigo) {
+                if (livro_atual.dir == -1) {
+                    livro_atual.dir = nova_posicao;
+                    escreve_livro(dados, livro_atual, pos_atual);
+                    escreve_livro(dados, x, nova_posicao);
+                    escreve_cabecalho(dados, cab);
+                    printf("Livro inserido à direita.\n");
+                    break;
+                } else {
+                    pos_atual = livro_atual.dir;
+                }
+            } else {
                 printf("Erro: Código de livro duplicado.\n");
                 break;
-                }
+            }
+        }
     }
-  }
-  free(cab);
+
+    free(cab);
 }
 
 // Imprime as posicoes livres do arquivo de dados

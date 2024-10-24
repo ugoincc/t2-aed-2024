@@ -26,6 +26,9 @@ typedef struct {
   int dir;
 } Livro;
 
+// Função auxiliar para encontrar o sucessor (o menor nó na subárvore direita)
+int encontrar_sucessor(FILE *dados, int pos_atual);
+
 // Função para imprimir as informações de um livro
 // Entrada: Ponteiro para o registro de livro
 // Saída: Dados do Livro
@@ -46,7 +49,7 @@ void cadastrar_livro(FILE *dados);
 // solicita um livro para ser removido
 // Pre-condicao: arquivo deve estar aberto e ser um arquivo de lista
 // Pos-condicao: no retirado da lista caso pertenca a ela
-void remover_livro(FILE *dados);
+int remover_livro(FILE *dados, int pos_atual, int codigo, cabecalho *cab);
 
 // Retira um no da lista
 // Pre-condicao: arquivo deve estar aberto e ser um arquivo de lista

@@ -4,7 +4,7 @@
 #include <string.h>
 
 int main() {
-    int opcao;
+    int opcao, target;
     char arquivoTexto[50];
     Livro livro_encontrado;
     cabecalho* cab = NULL;
@@ -25,11 +25,15 @@ int main() {
             break;
 
             case 2:
-                //remover_livro(dados);
-                break;
+                cab = le_cabecalho(dados);
+                printf("Digite o codigo do livro: ");
+                scanf("%d", &target);
+                cab->pos_cabeca = remover_livro(dados, cab->pos_cabeca, target, cab);
+                escreve_cabecalho(dados, cab);
+                free(cab);
+            break;
 
             case 3:
-                int target;
                 printf("Digite o codigo do livro: ");
                 scanf("%d", &target);
                 livro_encontrado = busca_livro(dados, target);
