@@ -51,7 +51,7 @@ int main() {
                 break;
             }
 
-            case 5:
+            case 5:{
                 char autorStr[200];
                 cab = le_cabecalho(dados);
                 printf("Digite o autor a ser pesquisado: ");
@@ -59,8 +59,9 @@ int main() {
                 busca_autor(dados, cab->pos_cabeca, autorStr);
                 printf("\n");
                 break;
+            }
 
-            case 6:
+            case 6:{
                 char tituloStr[200];
                 cab = le_cabecalho(dados);
                 printf("Digite o titulo a ser pesquisado: ");
@@ -68,6 +69,7 @@ int main() {
                 busca_titulo(dados, cab->pos_cabeca, tituloStr);
                 printf("\n");
                 break;
+            }
 
             case 7:
                 cab = le_cabecalho(dados);
